@@ -1,4 +1,4 @@
-# FightIQ# FightIQ 🥊
+# FightIQ 🥊
 An AI-powered MMA intelligence platform where users can ask questions about fighters, compare matchups, and predict fight outcomes using real UFC/MMA data.
 
 > 🚧 **Currently in development**
