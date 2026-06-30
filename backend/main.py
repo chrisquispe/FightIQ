@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from openai import OpenAI
 import json
 import joblib
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # Load the trained XGBoost model once when the app starts
 # Loading it inside every request would be slow — load once, reuse forever
@@ -19,6 +21,17 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # This creates your FastAPI application
 # Everything you build gets attached to this "app" object
 app = FastAPI(title="FightIQ API")
+
+# Allow your frontend (running on a different port) to call this API.
+# Without this, browsers block the request as a security measure —
+# this is what CORS protects against by default.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # This defines what the /chat request body must look like
 # Frontend must send: { "question": "some text" }

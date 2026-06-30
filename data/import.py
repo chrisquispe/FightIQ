@@ -145,13 +145,23 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 print("\n🤖 Generating embeddings...")
 
 # Fetch all fights we just inserted, with their IDs
-cur.execute("SELECT id, fighter1, fighter2, winner, method, round, weight_class, event_date FROM fights LIMIT 500")
+cur.execute("SELECT id, fighter1, fighter2, winner, method, round, weight_class, event_date FROM fights")
 fights_to_embed = cur.fetchall()
 
 embedded = 0
 
+# Find which fights are already embedded so we don't redo them
+cur.execute("SELECT fight_id FROM fight_embeddings")
+already_embedded = set(row[0] for row in cur.fetchall())
+print(f"Already embedded: {len(already_embedded)} fights — skipping those")
+
 for fight in tqdm(fights_to_embed, desc="Embedding fights"):
     fight_id    = fight[0]
+
+    # Skip fights we already embedded in a previous run
+    if fight_id in already_embedded:
+        continue
+    
     fighter1    = fight[1]
     fighter2    = fight[2]
     winner      = fight[3]
