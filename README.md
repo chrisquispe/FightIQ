@@ -62,27 +62,13 @@ Answer is returned to the user
 
 ## Project Structure
 
-```
 FightIQ/
-├── frontend/          # Next.js app — chat, compare, and predict pages
-│   └── app/
-│       ├── chat/       # AI Q&A interface
-│       ├── compare/    # Fighter comparison tool
-│       ├── predict/    # Win prediction tool
-│       └── components/ # Shared UI (navbar, etc.)
-├── backend/            # FastAPI app
-│   └── main.py          # Routes, RAG pipeline, tool calling logic
-├── ml/                 # Machine learning
-│   └── train.py          # XGBoost training script
-├── data/                # Data pipeline
-│   └── import.py          # ETL script: CSV → PostgreSQL + embeddings
-├── db/                  # Database schema
-│   └── init.sql            # Table definitions + pgvector setup
-├── eval/                # AI quality testing
-│   └── test_chat.py         # DeepEval test suite
+├── frontend/        # React/Next.js UI
+├── backend/         # FastAPI endpoints
+├── ml/              # XGBoost fight prediction model
+├── db/              # PostgreSQL schema and seed scripts
 ├── docker-compose.yml
 └── README.md
-```
 
 
 ---
@@ -136,35 +122,21 @@ pip install -r requirements.txt
 python -m pytest test_chat.py -v
 ```
 
+
 ---
 
-## The ML Model
-
-The fight predictor is an XGBoost classifier trained on 7,019 historical UFC fights, using three engineered features: height difference, reach difference, and win-rate difference between the two fighters. It achieves **75% accuracy** on fights it never saw during training (an 80/20 train/test split).
+## Getting Started
 
 ```bash
-cd ml
-python train.py
+# Clone the repo
+git clone https://github.com/chrisquispe/FightIQ.git
+cd FightIQ
+
+# Start all services
+docker compose up
 ```
 
----
-
-## Deployment
-
-FightIQ is deployed on AWS using:
-- **EC2** — runs the containerized app
-- **RDS** — managed PostgreSQL database
-- **ECR** — stores the Docker images
-- **IAM** — scoped access for deployment operations
-
----
-
-## Known Limitations
-
-- The prediction model doesn't currently account for head-to-head history between two specific fighters (a good next feature)
-- No authentication yet — the live deployment is publicly accessible
-- IP-based deployment (no permanent domain attached yet)
-- Not up to date with the fights
+> Full setup instructions coming as development progresses.
 
 ---
 
