@@ -13,7 +13,7 @@ load_dotenv()
 # psycopg2 is the Python library that talks to PostgreSQL
 # We build the connection using values from your .env file
 conn = psycopg2.connect(
-    host="localhost",       # the db is exposed to your Mac on localhost
+    host="fightiq-db.cd6quu8uc1xx.us-east-2.rds.amazonaws.com",       # the db is exposed to your Mac on localhost
     port=5432,
     database=os.getenv("POSTGRES_DB"),
     user=os.getenv("POSTGRES_USER"),

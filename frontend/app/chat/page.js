@@ -17,7 +17,8 @@ export default function ChatPage() {
     setAnswer("")
     setSources([])
 
-    const response = await fetch("http://localhost:8000/chat", {
+    // "http://localhost:8000/chat" - This is for local testing
+    const response = await fetch("http://3.133.95.6:8000/chat", { 
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question: question })

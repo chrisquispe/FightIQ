@@ -27,7 +27,9 @@ app = FastAPI(title="FightIQ API")
 # this is what CORS protects against by default.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    #allow_origins=["http://localhost:3000"], -- this is for local testing
+    #allow_origins=["http://18.218.1.94:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
