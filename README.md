@@ -26,23 +26,24 @@ This project was built end-to-end as a learning journey: from Docker fundamental
 
 ## How it works
 
+```
 User asks a question
-↓
+      ↓
 Question gets embedded (converted to a vector) using OpenAI
-↓
+      ↓
 pgvector searches 7,177 real fights for the most relevant matches
-↓
+      ↓
 GPT-4o-mini reads the question + retrieved fights + available tools
-↓
+      ↓
 If needed, it calls a backend tool:
-• get_fighter_stats() → pulls real stats from PostgreSQL
-• compare_fighters() → compares two fighters' stats
-• predict_fight() → runs the trained XGBoost model
-↓
+   • get_fighter_stats()   → pulls real stats from PostgreSQL
+   • compare_fighters()    → compares two fighters' stats
+   • predict_fight()       → runs the trained XGBoost model
+      ↓
 GPT-4o-mini writes a natural-language answer using the real results
-↓
+      ↓
 Answer is returned to the user
-
+```
 
 ---
 
@@ -62,14 +63,27 @@ Answer is returned to the user
 
 ## Project Structure
 
+```
 FightIQ/
-├── frontend/        # React/Next.js UI
-├── backend/         # FastAPI endpoints
-├── ml/              # XGBoost fight prediction model
-├── db/              # PostgreSQL schema and seed scripts
+├── frontend/          # Next.js app — chat, compare, and predict pages
+│   └── app/
+│       ├── chat/       # AI Q&A interface
+│       ├── compare/    # Fighter comparison tool
+│       ├── predict/    # Win prediction tool
+│       └── components/ # Shared UI (navbar, etc.)
+├── backend/            # FastAPI app
+│   └── main.py          # Routes, RAG pipeline, tool calling logic
+├── ml/                 # Machine learning
+│   └── train.py          # XGBoost training script
+├── data/                # Data pipeline
+│   └── import.py          # ETL script: CSV → PostgreSQL + embeddings
+├── db/                  # Database schema
+│   └── init.sql            # Table definitions + pgvector setup
+├── eval/                # AI quality testing
+│   └── test_chat.py         # DeepEval test suite
 ├── docker-compose.yml
 └── README.md
-
+```
 
 ---
 
@@ -88,12 +102,12 @@ FightIQ/
 ```
 
 2. **Create a `.env` file** in the project root:
-
-POSTGRES_DB=mma_db
-POSTGRES_USER=mma_user
-POSTGRES_PASSWORD=your_password_here
-OPENAI_API_KEY=your_openai_key_here
-
+```
+   POSTGRES_DB=mma_db
+   POSTGRES_USER=mma_user
+   POSTGRES_PASSWORD=your_password_here
+   OPENAI_API_KEY=your_openai_key_here
+```
 
 3. **Start all services**
 ```bash
@@ -122,21 +136,34 @@ pip install -r requirements.txt
 python -m pytest test_chat.py -v
 ```
 
+---
+
+## The ML Model
+
+The fight predictor is an XGBoost classifier trained on 7,019 historical UFC fights, using three engineered features: height difference, reach difference, and win-rate difference between the two fighters. It achieves **75% accuracy** on fights it never saw during training (an 80/20 train/test split).
+
+```bash
+cd ml
+python train.py
+```
 
 ---
 
-## Getting Started
+## Deployment
 
-```bash
-# Clone the repo
-git clone https://github.com/chrisquispe/FightIQ.git
-cd FightIQ
+FightIQ is deployed on AWS using:
+- **EC2** — runs the containerized app
+- **RDS** — managed PostgreSQL database
+- **ECR** — stores the Docker images
+- **IAM** — scoped access for deployment operations
 
-# Start all services
-docker compose up
-```
+---
 
-> Full setup instructions coming as development progresses.
+## Known Limitations
+
+- The prediction model doesn't currently account for head-to-head history between two specific fighters (a good next feature)
+- No authentication yet — the live deployment is publicly accessible
+- IP-based deployment (no permanent domain attached yet)
 
 ---
 
